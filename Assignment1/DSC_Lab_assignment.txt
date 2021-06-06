@@ -1,0 +1,315 @@
+1)Create a search function search an element in an array.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct result
+{
+	int n;
+	int *pos;
+	int capacity;
+};
+typedef struct result Result;
+
+Result search(int n,int a[],int ele)
+{
+	Result r;
+	r.n=0;
+	r.capacity=1;
+	r.pos=(int*)malloc(r.capacity*sizeof(int));
+	for(int i=0;i<n;++i)
+	{
+		if(a[i]==ele)
+		{
+			r.pos[r.n++]=i+1;
+			if(r.n==r.capacity)
+			{
+				r.capacity=r.n*2;
+				r.pos=(int*)realloc(r.pos,r.capacity*sizeof(int));
+			}
+		}
+	}
+	return r;	
+}
+
+int main()
+{
+	int n,searchEle;
+	printf("Enter the number of elements\n");
+	scanf("%d",&n);
+	int a[n];
+	printf("Enter the elements\n");
+	for(int i=0;i<n;++i)
+		scanf("%d",&a[i]);
+	printf("Enter the search element\n");
+	scanf("%d",&searchEle);
+	Result r;
+	r=search(n,a,searchEle);
+	printf("The positions are:\n");
+	for(int i=0;i<r.n;++i)
+		printf("%d ",r.pos[i]);
+	printf("\n");
+	free(r.pos);
+	return 0;
+}
+
+output:
+
+Enter the number of elements
+5
+Enter the elements
+1 2 3 4 4 
+Enter the search element
+4
+The positions are:
+4 5
+
+
+2)Implement a C program to read and print a text. Also count the number of characters, words and lines. Use pointers.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main()
+{
+	char *str=(char*)malloc(300*sizeof(char));
+	FILE *fp;
+	fp=fopen("data.txt","r+");
+	if(fp==NULL)
+	{
+		perror("Error opening file\n");
+		exit(1);
+	}
+	//fgets(str,200,fp);//accept only one continous line
+	int i=0;
+	char ch;
+	while((ch=fgetc(fp))!=EOF)
+		str[i++]=ch;
+	str[i]='\0';
+	if(str==NULL)
+	    exit(1);
+	printf("The text is:\n");
+	printf("%s\n",str);
+	int count_c=0,count_w=0,count_l=0;
+	/*i=0;
+	while(str[i]!='\0')
+	{
+		while(str[i]!='\n' && str[i]!='\0')
+		{
+			while(str[i]!='.')
+			{
+				while(str[i]!=' ' && str[i]!='.'){//spaces are not counted as characters
+					count_c++;
+					i++;
+				}
+				if(str[i]==' ')
+					i++;
+				count_w++;
+			}
+			count_l++;
+			i++;
+			if(str[i]==' ')
+				i++;
+		}
+		if(str[i]=='\n')
+			i++;
+	}
+	*/
+	int len=strlen(str);
+	for(i=0;i<len;++i)
+	{
+		count_c++;
+		if(str[i]=='\n'){
+			count_w++;
+			count_l++;
+		}
+		if(str[i]==' ')
+			count_w++;
+	}
+	if(count_c>0){//for last word
+		count_w++;
+		count_l++;
+	}
+	printf("The number of characters(including \\n and whitespaces)=%d, words=%d, line=%d\n",count_c,count_w,count_l);
+	free(str);
+	fclose(fp);	
+	return 0;
+}
+
+data.txt
+C programming is a general-purpose, procedural, imperative computer programming language developed in 1972 by Dennis M. Ritchie at the Bell Telephone Laboratories to develop the UNIX operating system.
+C is the most widely used computer language.
+
+output:
+
+The text is:
+C programming is a general-purpose, procedural, imperative computer programming language developed in 1972 by Dennis M. Ritchie at the Bell Telephone Laboratories to develop the UNIX operating system.
+C is the most widely used computer language.
+The number of characters(including \n and whitespaces)=245, words=36, line=2
+
+
+3)Design a C program to store details of COVID patients using structures. The details should include: Name, Age, Blood Group, Symptoms(Fever, Cold, Headache, cough, Body pain) and address
+
+#include <stdio.h>
+
+struct patient
+{
+	char name[25];
+	int age;
+	char bloodGrp[4];
+	char symptoms[100];
+	char address[100];
+};
+typedef struct patient Patient;
+
+Patient input_data_of_a_patient()
+{
+	Patient p;
+	printf("Name:");
+	scanf("%s",p.name);
+	printf("Age:");
+	scanf("%d",&p.age);
+	printf("Blood Group:");
+	scanf("%s",p.bloodGrp);
+	printf("Symptoms(Enter in a single line using commas):");
+	scanf("%s",p.symptoms);
+	printf("Address:");
+	scanf("%s",p.address);
+	return p;
+}
+
+void print_patient_details(Patient p)
+{
+	printf("Name:%s\nAge:%d\nBlood Group:%s\n",p.name,p.age,p.bloodGrp);
+	printf("Symptoms:%s\nAddress:%s\n",p.symptoms,p.address);
+}
+
+int main()
+{
+	int n;
+	printf("Enter the number of patients:\n");
+	scanf("%d",&n);
+	Patient p[n];
+	for(int i=0;i<n;++i){
+		printf("Enter the data of patient %d\n",i+1);
+		p[i]=input_data_of_a_patient();
+		printf("Patient %d details:\n",i+1);
+		print_patient_details(p[i]);
+	}
+	return 0;
+}
+
+output:
+
+Enter the number of patients:2
+Enter the data of patient 1
+Name:Deven
+Age:18
+Blood Group:O+
+Symptoms(Enter in a single line using commas):fever,cough,cold
+Address:#251,Chikkasandra,blore-90
+Patient 1 details:
+Name:Deven
+Age:18
+Blood Group:O+
+Symptoms:fever,cough,cold
+Address:#251,Chikkasandra,blore-90
+Enter the data of patient 2
+Name:deven2
+Age:25
+Blood Group:ab+
+Symptoms(Enter in a single line using commas):fever,cough,headache
+Address:#789,Basavangudei,b'lore-21
+Patient 2 details:
+Name:deven2
+Age:25
+Blood Group:ab+
+Symptoms:fever,cough,headache
+Address:#789,Basavangudei,b'lore-21
+
+
+4)Demonstrate the usage of pointer to a structure which reads and prints details of an employee
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct employee
+{
+	char name[25];
+	int age;
+	char sex;
+	long phoneNo;
+	char address[50];
+};
+typedef struct employee Employee;
+
+int main()
+{
+	Employee *e=(Employee*)malloc(sizeof(Employee));
+	printf("Enter the employee details:\n");
+	printf("Name : ");
+	scanf("%s",e->name);
+	printf("age : ");
+	scanf("%d",&e->age);
+	printf("sex(m/f) : ");
+	scanf(" %c",&e->sex);
+	printf("Phone number : ");
+	scanf("%ld",&e->phoneNo);
+	printf("Address : ");
+	scanf("%s",e->address);
+	printf("Employee details are : \n");
+	printf("Name : %s\n",e->name);
+	printf("age : %d\n",e->age);
+	printf("sex(m/f) : %c\n",e->sex);
+	printf("Phone number : %ld\n",e->phoneNo);
+	printf("Address : %s\n",e->address);
+	free(e);
+	return 0;
+}
+
+
+output:
+
+Enter the employee details:
+Name : deven
+age : 18
+sex(m/f) : m
+Phone number : 1234567890
+Address : #887,basavanagudi,b'lore-21
+Employee details are : 
+Name : deven
+age : 18
+sex(m/f) : m
+Phone number : 1234567890
+Address : #887,basavanagudi,b'lore-21
+
+
+5)Write a C program to create a dynamic array and populate it by reading values from the user
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+	int n;
+	printf("Enter the number of integers : ");
+	scanf("%d",&n);
+	int *a=(int*)malloc(n*sizeof(int));
+	printf("Enter the integers : ");
+	for(int i=0;i<n;++i)
+		scanf("%d",(a+i));
+	printf("The array elements are : ");
+	for(int i=0;i<n;++i)
+		printf("%d ",*(a+i));
+	printf("\n");
+	free(a);
+	return 0;
+}
+
+
+output:
+
+Enter the number of integers : 5
+Enter the integers : 12 2 3 4 5
+The array elements are : 12 2 3 4 5 
